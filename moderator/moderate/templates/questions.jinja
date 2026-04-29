@@ -1,5 +1,6 @@
 {% extends "base.jinja" %}
 {% from "includes/moderator_macros.html" import user_profile %}
+{% from "includes/form_macros.html" import floating, check %}
 
 {% block head %}
 <title>Mozilla Moderator - {{ event.name }}</title>
@@ -28,38 +29,36 @@
     <form method="post" action="{{ url('event', e_slug=event.slug) }}" id="question-form">
       {% csrf_token %}
       {{ q_form.non_field_errors() }}
-      <div class="selfimage">
-        {% if not user.userprofile.avatar_url %}
-        <img alt="Unknown profile image" src="{{ static('img/unknown.png') }}" />
-        {% else %}
-        <img src="{{ user.userprofile.avatar_url }}" alt="User profile image" />
-        {% endif %}
-      </div>
-      <div class="form-group question-text
-            {% if q_form.question.errors %}
-              has-error
-            {% endif %}" id="question-input">
-        <label for="{{ q_form.question.id_for_label }}">
-          Ask your question below.
-          <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>
-        </label>
-        {{ q_form.question }}
-        {{ q_form.question.errors }}
-      </div>
-      <div class="checkbox-anonymous">
-        {{ q_form.is_anonymous }}
-        <label for="{{ q_form.is_anonymous.id_for_label }}">
-          Post as an anonymous user.
-        </label>
-      </div>
-      {% if event.is_moderated %}
-      <div class="form-group question-text contact-info-container">
-        {{ q_form.submitter_contact_info }}
-        {{ q_form.submitter_contact_info.errors }}
-      </div>
-      {% endif %}
-      <div class="ask-container">
-        <input type="submit" class="btn btn-secondary" value="submit">
+      <div class="ask-row">
+        <div class="selfimage">
+          {% if not user.userprofile.avatar_url %}
+          <img alt="Unknown profile image" src="{{ static('img/unknown.png') }}" />
+          {% else %}
+          <img src="{{ user.userprofile.avatar_url }}" alt="User profile image" />
+          {% endif %}
+        </div>
+        <div class="ask-row-field">
+          {{ floating(q_form.question, "Ask your question") }}
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+              {{ q_form.is_anonymous }}
+              <label class="form-check-label" for="{{ q_form.is_anonymous.id_for_label }}">
+                Post as an anonymous user
+              </label>
+            </div>
+            <div class="form-text">
+              <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>
+            </div>
+          </div>
+          {% if event.is_moderated %}
+          <div class="contact-info-container">
+            {{ floating(q_form.submitter_contact_info, "Contact email (optional)") }}
+          </div>
+          {% endif %}
+          <div class="ask-container">
+            <input type="submit" class="btn btn-primary" value="Submit">
+          </div>
+        </div>
       </div>
     </form>
   </div>
@@ -128,15 +127,12 @@
       <form method="post" action="" id="answer-form">
         {% csrf_token %}
         <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           <h4 class="modal-title">Answer</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <label for="{{ q_form.answer.id_for_label }}">
-            Ask your question below.
-            <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>
-          </label>
-          {{ q_form.answer }}
+          {{ floating(q_form.answer, "Your reply",
+                      help='<a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>') }}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -43,7 +43,7 @@ class QuestionForm(forms.ModelForm):
         widget=forms.Textarea(
             attrs={
                 "placeholder": QUESTION,
-                "class": "form-control",
+                "class": "form-control textarea-md",
                 "required": "required",
             }
         ),
@@ -51,18 +51,26 @@ class QuestionForm(forms.ModelForm):
     answer = forms.CharField(
         required=False,
         max_length=2500,
-        widget=forms.Textarea(attrs={"placeholder": ANSWER, "class": "form-control"}),
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": ANSWER,
+                "class": "form-control textarea-md",
+            }
+        ),
     )
-    submitter_contact_info = forms.CharField(
+    submitter_contact_info = forms.EmailField(
         required=False,
-        widget=forms.TextInput(
+        widget=forms.EmailInput(
             attrs={"placeholder": CONTACT_INFO, "class": "form-control"}
         ),
     )
     rejection_reason = forms.CharField(
         required=False,
         widget=forms.Textarea(
-            attrs={"placeholder": REJECTION_REASON, "class": "form-control"}
+            attrs={
+                "placeholder": REJECTION_REASON,
+                "class": "form-control textarea-md",
+            }
         ),
     )
 
@@ -101,7 +109,9 @@ class QuestionForm(forms.ModelForm):
             "submitter_contact_info",
             "rejection_reason",
         ]
-        widgets = {"is_anonymous": forms.CheckboxInput()}
+        widgets = {
+            "is_anonymous": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
 
 
 class EventForm(forms.ModelForm):
@@ -151,13 +161,28 @@ class EventForm(forms.ModelForm):
             "users_can_vote",
             "event_date",
         ]
-        widgets = (
-            {
-                "is_nda": forms.CheckboxInput(),
-                "is_moderated": forms.CheckboxInput(),
-                "users_can_vote": forms.CheckboxInput(),
-            },
-        )
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Event title"}
+            ),
+            "body": forms.Textarea(
+                attrs={
+                    "class": "form-control textarea-md",
+                    "placeholder": "Helpful links, additional information",
+                }
+            ),
+            "event_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                    "placeholder": "Event date",
+                }
+            ),
+            "is_nda": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_moderated": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "users_can_vote": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "archived": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
         labels = {
             "name": "Event title",
         }

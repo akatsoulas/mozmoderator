@@ -189,16 +189,40 @@ ul.errorlist {
     object-fit: cover;
 }
 
+// Override Bootstrap 5's .form-floating > .form-control fixed height (56px) for
+// textareas — done via CSS class so we don't trip the CSP style-src directive
+// (which forbids inline style="" attributes under default-src 'self').
+.form-floating > textarea.form-control.textarea-lg {
+    height: 400px;
+}
+
+.form-floating > textarea.form-control.textarea-md {
+    height: 200px;
+}
+
+.form-floating > textarea.form-control.textarea-sm {
+    height: 120px;
+}
+
+// Ask-question form: avatar + textarea side-by-side.
+.ask-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.ask-row-field {
+    flex: 1;
+    min-width: 0;
+}
+
 .selfimage {
-    display: inline-block;
-    width: 10%;
-    vertical-align: top;
-    margin-top: -5px;
+    flex-shrink: 0;
 }
 
 .selfimage img {
     border-radius: 100%;
-    position: absolute;
     border: 3px solid #fff;
     box-shadow: 0 0 1px rgba(0, 2, 2, 0.2);
     width: 70px;

@@ -1,0 +1,41 @@
+{# Reusable Bootstrap 5 form-field macros.
+ #
+ # `floating(field, label)` renders a Bootstrap 5 floating-label input. The
+ # underlying widget (in forms.py) must carry `class="form-control"` and a
+ # `placeholder` attribute (any non-empty value triggers the floating
+ # animation). For textareas, set an explicit height in the widget's style
+ # attr so the floating label fits.
+ #
+ # `check(field, label)` renders a Bootstrap 5 form-check checkbox row. The
+ # underlying widget must carry `class="form-check-input"`.
+ #
+ # `field_errors(field)` is the shared error-rendering tail. Used inside
+ # both macros — kept separate so callers can render errors next to a
+ # widget that doesn't fit floating/check (e.g. Tom Select).
+ #}
+
+{% macro field_errors(field) %}
+{% if field.errors %}
+<div class="invalid-feedback d-block">
+  {% for error in field.errors %}<div>{{ error }}</div>{% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro floating(field, label, help=None) %}
+<div class="form-floating mb-3">
+  {{ field }}
+  <label for="{{ field.id_for_label }}">{{ label }}</label>
+  {% if help %}<div class="form-text text-end">{{ help|safe }}</div>{% endif %}
+  {{ field_errors(field) }}
+</div>
+{% endmacro %}
+
+{% macro check(field, label, help=None) %}
+<div class="form-check mb-3">
+  {{ field }}
+  <label class="form-check-label" for="{{ field.id_for_label }}">{{ label|safe }}</label>
+  {% if help %}<div class="form-text">{{ help|safe }}</div>{% endif %}
+  {{ field_errors(field) }}
+</div>
+{% endmacro %}
