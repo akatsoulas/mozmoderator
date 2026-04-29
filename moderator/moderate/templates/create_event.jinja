@@ -19,10 +19,8 @@
 
 {% if event_form.errors %}
 <div class="alert alert-danger alert-dismissible" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
   Please correct the errors below.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
 {% endblock %}
@@ -36,8 +34,8 @@
   Create an Event
   {% endif %}
 </h1>
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card">
+  <div class="card-body">
     <form method="post" {% if edit %} action="{{ url('edit_event', slug=slug) }}" {% else %}
       action="{{ url('create_event') }}" {% endif %} id="question-form">
       {% csrf_token %}

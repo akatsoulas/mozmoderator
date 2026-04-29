@@ -1,10 +1,32 @@
-from dal import autocomplete
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 
 from .models import Event, Question
+
+class TomSelectMultiple(forms.SelectMultiple):
+    """SelectMultiple enhanced with Tom Select on the client.
+
+    Renders only currently-selected options as <option> elements; the
+    rest are loaded on demand from `autocomplete_url` via fetch.
+    """
+
+    def __init__(self, autocomplete_url, attrs=None):
+        merged = {
+            "data-autocomplete-url": autocomplete_url,
+            "class": ((attrs or {}).get("class", "") + " tom-select form-control").strip(),
+        }
+        merged.update({k: v for k, v in (attrs or {}).items() if k not in merged})
+        super().__init__(attrs=merged)
+
+    def optgroups(self, name, value, attrs=None):
+        groups = super().optgroups(name, value, attrs)
+        return [
+            (group_name, [opt for opt in options if opt["selected"]], idx)
+            for group_name, options, idx in groups
+        ]
+
 
 QUESTION = "Ask your question in 280 characters"
 ANSWER = "Reply to question in 2500 characters"
@@ -87,7 +109,7 @@ class EventForm(forms.ModelForm):
 
     moderators = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url="users-autocomplete"),
+        widget=TomSelectMultiple(autocomplete_url="/u/user-autocomplete/"),
         required=False,
     )
 

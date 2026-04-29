@@ -1,8 +1,8 @@
-from dal import autocomplete
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -13,6 +13,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.timezone import now as django_now
+from django.views import View
 from mozilla_django_oidc.views import OIDCAuthenticationCallbackView
 
 from moderator.moderate.forms import EventForm, QuestionForm
@@ -292,25 +293,24 @@ def upvote(request, q_id):
     return redirect(reverse("event", kwargs={"e_slug": event.slug}))
 
 
-class ModeratorsAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return User.objects.none()
+class UserAutocompleteView(LoginRequiredMixin, View):
+    """JSON endpoint for the moderator picker (Tom Select)."""
 
-        # exclude users that are not admins
-        # and are not active or haven't logged in for 6 months
+    def get(self, request):
         last_login_date = django_now().date() - relativedelta(months=6)
         qs = User.objects.exclude(
             Q(is_active=False) | Q(is_superuser=False, last_login__lt=last_login_date)
-        ).filter()
-
-        if self.q:
+        )
+        q = request.GET.get("q", "").strip()
+        if q:
             qs = qs.filter(
-                Q(first_name__icontains=self.q)
-                | Q(email__icontains=self.q)
-                | Q(userprofile__username__icontains=self.q)
+                Q(first_name__icontains=q)
+                | Q(email__icontains=q)
+                | Q(userprofile__username__icontains=q)
             )
-        return qs
+        qs = qs.order_by("username")[:20]
+        results = [{"id": user.id, "text": str(user)} for user in qs]
+        return JsonResponse({"results": results})
 
 
 def login_local_user(request, username=""):

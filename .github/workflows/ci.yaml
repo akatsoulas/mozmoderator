@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: "3.14"
 
       - name: Install dependencies
         run: |
@@ -20,8 +20,28 @@ jobs:
       - name: Lint with flake8
         run: flake8 moderator --count --show-source --statistics
 
-  build-image:
+  pytest:
     needs: flake8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install Poetry
+        run: pipx install poetry==2.0.1
+
+      - name: Install dependencies
+        run: poetry install --with dev
+
+      - name: Run pytest
+        run: poetry run pytest -q
+
+  build-image:
+    needs: pytest
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main'
     steps:

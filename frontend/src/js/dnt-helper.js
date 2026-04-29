@@ -1,0 +1,18 @@
+window._dntEnabled = function _dntEnabled(n, i) {
+    'use strict';
+    var t = n || navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+    var e = i || navigator.userAgent;
+    var o = ['Windows NT 6.1', 'Windows NT 6.2', 'Windows NT 6.3'];
+    var d = e.match(/Firefox\/(\d+)/);
+    var a = /MSIE|Trident/i;
+    var r = a.test(e);
+    var s = e.match(/Windows.+?(?=;)/g);
+    return (!r || 'function' == typeof Array.prototype.indexOf) && (
+        t = d && parseInt(d[1], 10) < 32
+            ? 'Unspecified'
+            : r && s && o.indexOf(s.toString()) !== -1
+                ? 'Unspecified'
+                : { 0: 'Disabled', 1: 'Enabled' }[t] || 'Unspecified',
+        'Enabled' === t
+    );
+};
