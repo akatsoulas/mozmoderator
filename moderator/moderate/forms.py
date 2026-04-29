@@ -28,7 +28,7 @@ class TomSelectMultiple(forms.SelectMultiple):
         ]
 
 
-QUESTION = "Ask your question in 280 characters"
+QUESTION = "Ask your question in 500 characters"
 ANSWER = "Reply to question in 2500 characters"
 CONTACT_INFO = "Optional: Please supply a valid email address."
 REJECTION_REASON = "Reply to the submitter on why this question was moderated."
@@ -38,8 +38,8 @@ class QuestionForm(forms.ModelForm):
     """Question Form."""
 
     question = forms.CharField(
-        validators=[MaxLengthValidator(280), MinLengthValidator(10)],
-        max_length=280,
+        validators=[MaxLengthValidator(500), MinLengthValidator(10)],
+        max_length=500,
         widget=forms.Textarea(
             attrs={
                 "placeholder": QUESTION,
@@ -66,6 +66,7 @@ class QuestionForm(forms.ModelForm):
     )
     rejection_reason = forms.CharField(
         required=False,
+        max_length=500,
         widget=forms.Textarea(
             attrs={
                 "placeholder": REJECTION_REASON,
@@ -169,6 +170,7 @@ class EventForm(forms.ModelForm):
                 attrs={
                     "class": "form-control textarea-md",
                     "placeholder": "Helpful links, additional information",
+                    "maxlength": "2500",
                 }
             ),
             "event_date": forms.DateInput(
