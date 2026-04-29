@@ -6,6 +6,10 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
     root: ".",
+    // All built assets are served from Django's STATIC_URL prefix (= "/static/").
+    // Setting base ensures URLs Vite emits in bundled CSS/JS (e.g. @font-face src)
+    // include this prefix so they resolve against Django's staticfiles handler.
+    base: "/static/",
     build: {
         outDir: "dist",
         emptyOutDir: true,

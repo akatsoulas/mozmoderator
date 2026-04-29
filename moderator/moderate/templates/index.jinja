@@ -11,7 +11,7 @@
 <h3 class="text-center">Select event to view and ask questions.</h3>
 
 {% for event in events.order_by('-created_at') %}
-<div class="card">
+<div class="card mb-4">
   <div class="card-body">
     <div class="event-listing">
       <a href="{{ url('event', e_slug=event.slug) }}">

@@ -10,7 +10,7 @@
 <h3 class="text-center">Events Archive</h3>
 
 {% for event in events %}
-<div class="card">
+<div class="card mb-4">
   <div class="card-body">
     <a href="{{ url('event', e_slug=event.slug) }}" class="event-listing">
       <h1>{{ event.name }}</h1>

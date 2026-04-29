@@ -6,11 +6,6 @@
 {% endblock %}
 
 {% block breadcrumb %}
-<ol class="breadcrumb">
-  <li><a href="/">Events</a></li>
-  <li class="active">{{ event.name }}</li>
-</ol>
-
 {% if q_form.errors %}
 <div class="alert alert-danger alert-dismissible" role="alert">
   Please correct the errors below.
@@ -21,14 +16,14 @@
 
 {% block content %}
 {% if event.is_moderated and not event.archived %}
-<div class="breadcrumb help-text">
+<div class="alert alert-info help-text">
   Questions will remain in a queue until a moderator approves them.
   By using any legitimate email address, such as those offered by Firefox Relay,
   the moderator can offer a reason if your question is declined.
 </div>
 {% endif %}
 {% if open %}
-<div class="card">
+<div class="card mb-4">
   <div class="card-body">
     <form method="post" action="{{ url('event', e_slug=event.slug) }}" id="question-form">
       {% csrf_token %}
@@ -72,7 +67,7 @@
 {% endif %}
 
 {% for q in questions %}
-<div class="card">
+<div class="card mb-3">
   <div class="card-body">
     {% if q.addressed %}
     <div class="ribbon-wrapper">

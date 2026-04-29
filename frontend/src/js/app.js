@@ -19,7 +19,10 @@ function init() {
         btn.addEventListener('click', async () => {
             const questionId = btn.id;
             const response = await fetch(`/q/${questionId}/upvote`, {
-                headers: { Accept: 'application/json' },
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
             });
             if (!response.ok) {
                 return;
@@ -31,6 +34,15 @@ function init() {
             }
             btn.classList.toggle('btn-light');
             btn.classList.toggle('btn-dark');
+
+            // Swap the label to match the new state. Server renders one of two
+            // strings on page load; we replicate that toggle client-side.
+            const icon = btn.querySelector('i');
+            const isVoted = btn.classList.contains('btn-dark');
+            btn.textContent = isVoted ? ' Remove the upvote' : ' Upvote';
+            if (icon) {
+                btn.prepend(icon);
+            }
         });
     });
 

@@ -20,22 +20,24 @@
 {% endmacro %}
 
 {% macro edit_event_container(event, user) %}
-{% if can_moderate_event(event, user) %}
-<div>
-  <div class="edit-container">
-    <a href="{{ url('edit_event', slug=event.slug) }}" class="btn btn-primary btn-sm">edit</a>
-    {% if event.is_moderated and event.questions.filter(is_accepted__isnull=True).exists() %}
-    <a href="{{ url('moderate_event', slug=event.slug) }}" class="btn btn-primary btn-sm">moderate</a>
-    {% endif %}
+<div class="event-footer">
+  {% if can_moderate_event(event, user) %}
+  <div class="event-actions">
+    <div class="edit-container">
+      <a href="{{ url('edit_event', slug=event.slug) }}" class="btn btn-primary btn-sm">edit</a>
+      {% if event.is_moderated and event.questions.filter(is_accepted__isnull=True).exists() %}
+      <a href="{{ url('moderate_event', slug=event.slug) }}" class="btn btn-primary btn-sm">moderate</a>
+      {% endif %}
+    </div>
+    <div class="delete-container">
+      <button class="btn btn-danger btn-sm" aria-label="Delete event" data-bs-toggle="modal" data-bs-target="#DeleteModal"
+        id="{{ event.slug }}">delete</button>
+    </div>
   </div>
-  <div class="delete-container">
-    <button class="btn btn-danger btn-sm" aria-label="Delete event" data-bs-toggle="modal" data-bs-target="#DeleteModal"
-      id="{{ event.slug }}">delete</button>
+  {% endif %}
+  <div class="event-date">
+    {{ event.event_date|date('F j, Y') }}
   </div>
-</div>
-{% endif %}
-<div class="event-date">
-  {{ event.event_date|date('F j, Y') }}
 </div>
 
 <!-- Modal for Event Delete -->

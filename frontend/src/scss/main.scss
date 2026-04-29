@@ -1,51 +1,12 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
-/* Fonts
-==================== */
-@font-face {
-    font-family: "Open Sans";
-    src: url("/static/fonts/OpenSans-Regular.eot");
-    src: url("/static/fonts/OpenSans-Regular.eot?#iefix") format("embedded-opentype"),
-        url("/static/fonts/OpenSans-Regular.woff") format("woff"),
-        url("/static/fonts/OpenSans-Regular.ttf") format("truetype"),
-        url("/static/fonts/OpenSans-Regular.svg#open_sans") format("svg");
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: "Open Sans";
-    src: url("/static/fonts/OpenSans-Bold.eot");
-    src: url("/static/fonts/OpenSans-Bold.eot?#iefix") format("embedded-opentype"),
-        url("/static/fonts/OpenSans-Bold.woff") format("woff"),
-        url("/static/fonts/OpenSans-Bold.ttf") format("truetype"),
-        url("/static/fonts/OpenSans-Bold.svg#open_sansbold") format("svg");
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: "Open Sans";
-    src: url("/static/fonts/OpenSans-BoldItalic.eot");
-    src: url("/static/fonts/OpenSans-BoldItalic.eot?#iefix") format("embedded-opentype"),
-        url("/static/fonts/OpenSans-BoldItalic.woff") format("woff"),
-        url("/static/fonts/OpenSans-BoldItalic.ttf") format("truetype"),
-        url("/static/fonts/OpenSans-BoldItalic.svg#open_sansbold_italic") format("svg");
-    font-weight: bold;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: "Open Sans";
-    src: url("/static/fonts/OpenSans-Italic.eot");
-    src: url("/static/fonts/OpenSans-Italic.eot?#iefix") format("embedded-opentype"),
-        url("/static/fonts/OpenSans-Italic.woff") format("woff"),
-        url("/static/fonts/OpenSans-Italic.ttf") format("truetype"),
-        url("/static/fonts/OpenSans-Italic.svg#open_sansitalic") format("svg");
-    font-weight: normal;
-    font-style: italic;
-}
+// Mozilla Protocol typography — Zilla Slab for display, Inter for body.
+// Self-hosted via @fontsource, bundled by Vite, no third-party requests.
+@import '@fontsource-variable/inter';
+@import '@fontsource/zilla-slab/400.css';
+@import '@fontsource/zilla-slab/500.css';
+@import '@fontsource/zilla-slab/700.css';
 
 /* General
 ==================== */
@@ -66,7 +27,7 @@ body {
     color: #666;
     font-size: 16px;
     line-height: 1.4;
-    font-family: "Open Sans", sans-serif;
+    font-family: "Inter Variable", "Inter", sans-serif;
 }
 
 h1,
@@ -75,7 +36,8 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Open Sans", sans-serif;
+    font-family: "Zilla Slab", serif;
+    font-weight: 500;
 }
 
 h3 {
@@ -102,19 +64,46 @@ a {
     margin: 15px;
 }
 
-#logout {
-    padding: 15px;
+.navbar button.nav-link {
+    background: transparent;
+    border: 0;
 }
 
-.navbar-default {
+.navbar {
     background-color: transparent;
     min-height: 70px;
     border: none;
 }
 
-.navbar-default .navbar-nav>li>a,
-.navbar-default .btn-link {
+.navbar .navbar-nav>li>a,
+.navbar .btn-link {
     color: #666;
+}
+
+// Three-column grid layout at lg+: brand | menu | end.
+// `display: contents` on the collapse lets its inner ULs participate in the
+// grid directly, so the center menu is anchored to the container's true
+// center (same axis as the main page content), regardless of brand/end widths.
+@include media-breakpoint-up(lg) {
+    .navbar > .container {
+        display: grid !important;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+    }
+    .navbar > .container > .navbar-brand {
+        grid-column: 1;
+        justify-self: start;
+    }
+    .navbar > .container > .navbar-collapse {
+        display: contents !important;
+    }
+    .navbar > .container > .navbar-collapse > .navbar-nav:first-of-type {
+        grid-column: 2;
+    }
+    .navbar > .container > .navbar-collapse > .navbar-nav:last-of-type {
+        grid-column: 3;
+        justify-self: end;
+    }
 }
 
 #navbar {
@@ -166,12 +155,22 @@ ul.errorlist {
 }
 
 
+.event-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.75rem 35px 0.75rem 25px;
+}
+
+.event-actions {
+    margin-right: auto;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
 .event-date {
-    float: right;
     color: #999;
-    margin-top: -35px;
-    text-align: right;
-    padding-right: 35px;
 }
 
 .askedby {
@@ -250,25 +249,18 @@ ul.errorlist {
 }
 
 .edit-container {
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-    padding: 10px;
-    margin-top: -15px;
-    margin-left: 25px;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.delete-container {
+    display: flex;
 }
 
 .moderation-container {
     display: flex;
     justify-content: center;
     margin-top: 10%;
-}
-
-.delete-container {
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-    margin-top: -15px;
 }
 
 .contact-info-container {
