@@ -100,6 +100,27 @@ function init() {
         }
     });
 
+    document.querySelectorAll('textarea[maxlength]').forEach((textarea) => {
+        const max = parseInt(textarea.getAttribute('maxlength'), 10);
+        if (!max) {
+            return;
+        }
+        const counter = document.createElement('div');
+        counter.className = 'form-text text-end textarea-counter';
+
+        const update = () => {
+            const remaining = max - textarea.value.length;
+            counter.textContent = `${remaining} characters remaining`;
+            counter.classList.toggle('text-danger', remaining < 50);
+        };
+
+        // Insert after the .form-floating wrapper (or next to the textarea if not wrapped).
+        const anchor = textarea.closest('.form-floating') || textarea;
+        anchor.parentNode.insertBefore(counter, anchor.nextSibling);
+        update();
+        textarea.addEventListener('input', update);
+    });
+
     document.querySelectorAll('select.tom-select').forEach((el) => {
         if (typeof window.TomSelect === 'undefined') {
             return;

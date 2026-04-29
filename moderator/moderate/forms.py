@@ -5,6 +5,7 @@ from django.core.validators import MaxLengthValidator, MinLengthValidator
 
 from .models import Event, Question
 
+
 class TomSelectMultiple(forms.SelectMultiple):
     """SelectMultiple enhanced with Tom Select on the client.
 
