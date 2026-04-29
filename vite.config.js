@@ -13,8 +13,6 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, "frontend/src/js/main.js"),
-                "google-analytics": resolve(__dirname, "frontend/src/js/google-analytics.js"),
-                "dnt-helper": resolve(__dirname, "frontend/src/js/dnt-helper.js"),
             },
             output: {
                 entryFileNames: "js/[name].js",

@@ -210,7 +210,6 @@ CONTENT_SECURITY_POLICY = {
         ],
         "img-src": [
             "'self'",
-            "https://*.google-analytics.com",
             "https://*.gravatar.com",
             "https://*.wp.com",
             "https://people.mozilla.org",
@@ -218,7 +217,6 @@ CONTENT_SECURITY_POLICY = {
         ],
         "script-src": [
             "'self'",
-            "https://*.google-analytics.com",
         ],
     },
 }
