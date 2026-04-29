@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import include
+from django.urls import include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path
 
@@ -28,7 +28,7 @@ event_urls = [
 user_urls = [
     path(
         "user-autocomplete/",
-        moderate_views.ModeratorsAutocomplete.as_view(),
+        moderate_views.UserAutocompleteView.as_view(),
         name="users-autocomplete",
     )
 ]

@@ -1,4 +1,3 @@
-from dal import autocomplete
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -6,7 +5,31 @@ from django.core.validators import MaxLengthValidator, MinLengthValidator
 
 from .models import Event, Question
 
-QUESTION = "Ask your question in 280 characters"
+
+class TomSelectMultiple(forms.SelectMultiple):
+    """SelectMultiple enhanced with Tom Select on the client.
+
+    Renders only currently-selected options as <option> elements; the
+    rest are loaded on demand from `autocomplete_url` via fetch.
+    """
+
+    def __init__(self, autocomplete_url, attrs=None):
+        merged = {
+            "data-autocomplete-url": autocomplete_url,
+            "class": ((attrs or {}).get("class", "") + " tom-select form-control").strip(),
+        }
+        merged.update({k: v for k, v in (attrs or {}).items() if k not in merged})
+        super().__init__(attrs=merged)
+
+    def optgroups(self, name, value, attrs=None):
+        groups = super().optgroups(name, value, attrs)
+        return [
+            (group_name, [opt for opt in options if opt["selected"]], idx)
+            for group_name, options, idx in groups
+        ]
+
+
+QUESTION = "Ask your question in 500 characters"
 ANSWER = "Reply to question in 2500 characters"
 CONTACT_INFO = "Optional: Please supply a valid email address."
 REJECTION_REASON = "Reply to the submitter on why this question was moderated."
@@ -16,12 +39,12 @@ class QuestionForm(forms.ModelForm):
     """Question Form."""
 
     question = forms.CharField(
-        validators=[MaxLengthValidator(280), MinLengthValidator(10)],
-        max_length=280,
+        validators=[MaxLengthValidator(500), MinLengthValidator(10)],
+        max_length=500,
         widget=forms.Textarea(
             attrs={
                 "placeholder": QUESTION,
-                "class": "form-control",
+                "class": "form-control textarea-md",
                 "required": "required",
             }
         ),
@@ -29,18 +52,27 @@ class QuestionForm(forms.ModelForm):
     answer = forms.CharField(
         required=False,
         max_length=2500,
-        widget=forms.Textarea(attrs={"placeholder": ANSWER, "class": "form-control"}),
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": ANSWER,
+                "class": "form-control textarea-md",
+            }
+        ),
     )
-    submitter_contact_info = forms.CharField(
+    submitter_contact_info = forms.EmailField(
         required=False,
-        widget=forms.TextInput(
+        widget=forms.EmailInput(
             attrs={"placeholder": CONTACT_INFO, "class": "form-control"}
         ),
     )
     rejection_reason = forms.CharField(
         required=False,
+        max_length=500,
         widget=forms.Textarea(
-            attrs={"placeholder": REJECTION_REASON, "class": "form-control"}
+            attrs={
+                "placeholder": REJECTION_REASON,
+                "class": "form-control textarea-md",
+            }
         ),
     )
 
@@ -79,7 +111,9 @@ class QuestionForm(forms.ModelForm):
             "submitter_contact_info",
             "rejection_reason",
         ]
-        widgets = {"is_anonymous": forms.CheckboxInput()}
+        widgets = {
+            "is_anonymous": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
 
 
 class EventForm(forms.ModelForm):
@@ -87,7 +121,7 @@ class EventForm(forms.ModelForm):
 
     moderators = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url="users-autocomplete"),
+        widget=TomSelectMultiple(autocomplete_url="/u/user-autocomplete/"),
         required=False,
     )
 
@@ -129,13 +163,29 @@ class EventForm(forms.ModelForm):
             "users_can_vote",
             "event_date",
         ]
-        widgets = (
-            {
-                "is_nda": forms.CheckboxInput(),
-                "is_moderated": forms.CheckboxInput(),
-                "users_can_vote": forms.CheckboxInput(),
-            },
-        )
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Event title"}
+            ),
+            "body": forms.Textarea(
+                attrs={
+                    "class": "form-control textarea-md",
+                    "placeholder": "Helpful links, additional information",
+                    "maxlength": "2500",
+                }
+            ),
+            "event_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                    "placeholder": "Event date",
+                }
+            ),
+            "is_nda": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_moderated": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "users_can_vote": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "archived": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
         labels = {
             "name": "Event title",
         }

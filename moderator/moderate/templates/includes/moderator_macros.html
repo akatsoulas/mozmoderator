@@ -4,38 +4,40 @@
   {% if not is_anonymous %}
   <a href="https://people.mozilla.org/s/?query={{ user.userprofile.username }}&who=staff" target="_blank">
     <img alt="User profile image" src="{{ get_profile_image(user, is_anonymous) }}"
-      title="{% if is_anonymous %}anonymous{% else %}{{ user.userprofile.username }}{% endif %}" data-toggle="tooltip"
+      title="{% if is_anonymous %}anonymous{% else %}{{ user.userprofile.username }}{% endif %}" data-bs-toggle="tooltip"
       data-placement="bottom" />
   </a>
   {% else %}
   <img alt="profile image" src="{{ get_profile_image(user, is_anonymous) }}"
-    title="{% if is_anonymous %}anonymous{% else %}{{ user.userprofile.username }}{% endif %}" data-toggle="tooltip"
+    title="{% if is_anonymous %}anonymous{% else %}{{ user.userprofile.username }}{% endif %}" data-bs-toggle="tooltip"
     data-placement="bottom" />
   {% endif %}
   {% else %}
-  <img alt="profile image" src="{{ static('img/unknown.png') }}" title="anonymous" data-toggle="tooltip"
+  <img alt="profile image" src="{{ static('img/unknown.png') }}" title="anonymous" data-bs-toggle="tooltip"
     data-placement="bottom" />
   {% endif %}
 </div>
 {% endmacro %}
 
 {% macro edit_event_container(event, user) %}
-{% if can_moderate_event(event, user) %}
-<div>
-  <div class="edit-container">
-    <a href="{{ url('edit_event', slug=event.slug) }}" class="btn btn-primary btn-sm">edit</a>
-    {% if event.is_moderated and event.questions.filter(is_accepted__isnull=True).exists() %}
-    <a href="{{ url('moderate_event', slug=event.slug) }}" class="btn btn-primary btn-sm">moderate</a>
-    {% endif %}
+<div class="event-footer">
+  {% if can_moderate_event(event, user) %}
+  <div class="event-actions">
+    <div class="edit-container">
+      <a href="{{ url('edit_event', slug=event.slug) }}" class="btn btn-primary btn-sm">edit</a>
+      {% if event.is_moderated and event.questions.filter(is_accepted__isnull=True).exists() %}
+      <a href="{{ url('moderate_event', slug=event.slug) }}" class="btn btn-primary btn-sm">moderate</a>
+      {% endif %}
+    </div>
+    <div class="delete-container">
+      <button class="btn btn-danger btn-sm" aria-label="Delete event" data-bs-toggle="modal" data-bs-target="#DeleteModal"
+        id="{{ event.slug }}">delete</button>
+    </div>
   </div>
-  <div class="delete-container">
-    <button class="btn btn-danger btn-sm" aria-label="Delete event" data-toggle="modal" data-target="#DeleteModal"
-      id="{{ event.slug }}">delete</button>
+  {% endif %}
+  <div class="event-date">
+    {{ event.event_date|date('F j, Y') }}
   </div>
-</div>
-{% endif %}
-<div class="event-date">
-  {{ event.event_date|date('F j, Y') }}
 </div>
 
 <!-- Modal for Event Delete -->
@@ -44,16 +46,14 @@
     <div class="modal-content">
 
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <h4 class="modal-title">Event Deletion</h4>
       </div>
       <div class="modal-body">
         Are you certain you want to delete this event?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">No!</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No!</button>
         <a href="{{ url('delete_event', slug=event.slug) }}" class="btn btn-danger btn-sm">Delete</a>
       </div>
 

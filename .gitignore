@@ -12,3 +12,7 @@ node_modules
 .ipython
 .cache
 .pdbhistory
+.worktrees/
+/dist/
+.claude
+docs/superpowers

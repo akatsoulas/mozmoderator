@@ -2,22 +2,34 @@
   "name": "mozmoderator",
   "version": "0.1.0",
   "description": "Mozilla Moderator App",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/mozilla/mozmoderator.git"
   },
   "author": "Mozilla",
-  "license": "AGPL",
-  "bugs": {
-    "url": "https://github.com/mozilla/mozmoderator/issues"
+  "license": "AGPL-3.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "lint:js": "eslint frontend/src/js",
+    "lint:css": "stylelint \"frontend/src/scss/**/*.scss\""
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.1.1",
+    "@fontsource/zilla-slab": "^5.1.0",
+    "bootstrap": "5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "tom-select": "^2.4.3"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-clean-css": "^3.0.3",
-    "gulp-eslint": "^3.0.1",
-    "gulp-filter": "^5.0.0",
-    "gulp-main-bower-files": "^1.6.1",
-    "gulp-stylelint": "^3.9.0",
-    "gulp-uglify": "^2.0.1"
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "sass": "^1.80.0",
+    "stylelint": "^16.10.0",
+    "stylelint-config-standard-scss": "^13.1.0",
+    "vite": "^5.4.10"
   }
 }

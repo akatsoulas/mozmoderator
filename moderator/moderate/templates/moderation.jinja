@@ -8,8 +8,8 @@
 {% block content %}
 {% if questions %}
 {% for q in questions %}
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card mb-3">
+  <div class="card-body">
 
     {{ user_profile(q.asked_by) }}
 
@@ -26,8 +26,8 @@
       <a href="{{ url('moderate_reject_question', slug=event.slug, q_id=q.pk) }}"
         class="btn btn-danger btn-sm">reject</a>
       {% else %}
-      <button class="btn btn-danger btn-sm moderate-button" id="{{ q.pk }}" data-toggle="modal"
-        data-target="#ModerateModal">
+      <button class="btn btn-danger btn-sm moderate-button" id="{{ q.pk }}" data-bs-toggle="modal"
+        data-bs-target="#ModerateModal">
         reply
       </button>
       {% endif %}
@@ -49,16 +49,14 @@
       <form method="post" action="{{ url('moderate_event', slug=event.slug) }}" id="moderate-form">
         {% csrf_token %}
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           <h4 class="modal-title">Moderator's reply</h4>
         </div>
         <div class="modal-body">
           {{ q_form.rejection_reason }}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <input type="submit" class="btn btn-primary" value="Submit">
         </div>
       </form>

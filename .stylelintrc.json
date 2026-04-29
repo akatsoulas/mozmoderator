@@ -1,0 +1,14 @@
+{
+    "extends": "stylelint-config-standard-scss",
+    "rules": {
+        "selector-class-pattern": null,
+        "scss/at-import-partial-extension": null,
+        "selector-pseudo-element-colon-notation": null,
+        "shorthand-property-no-redundant-values": null,
+        "color-function-notation": null,
+        "alpha-value-notation": null,
+        "media-feature-range-notation": null,
+        "no-descending-specificity": null,
+        "rule-empty-line-before": null
+    }
+}

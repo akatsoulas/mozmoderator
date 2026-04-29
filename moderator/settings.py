@@ -3,7 +3,6 @@
 import os
 
 import dj_database_url
-import pymysql
 from decouple import Csv, config
 from django_jinja.builtins import DEFAULT_EXTENSIONS
 
@@ -14,6 +13,11 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 DEV = config("DEV", default=False, cast=bool)
 SITE_URL = config("SITE_URL")
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="",
+    cast=Csv(),
+)
 
 
 # Defines the views served for root URLs.
@@ -27,8 +31,6 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "dal",
-    "dal_select2",
     "django.contrib.admin",
     # Third party apps
     # "axes",
@@ -55,8 +57,18 @@ MIDDLEWARE = [
 
 # List of finder classes that know how to find static files in
 # various locations.
-if not DEV:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEV
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -136,11 +148,11 @@ MEDIA_URL = "/media/"
 # Example: "/var/www/example.com/static/"
 STATIC_ROOT = path("static")
 STATIC_URL = "/static/"
+STATICFILES_DIRS = (path("dist"),)
 
 # Internationalization
 TIME_ZONE = config("TIME_ZONE", default="UTC")
 USE_I18N = config("USE_I18N", default=False, cast=bool)
-USE_L10N = config("USE_L10N", default=False, cast=bool)
 USE_TZ = config("USE_TZ", default=True, cast=bool)
 
 # Path to redirect to on successful login.
@@ -162,7 +174,6 @@ CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=True, cast=bool)
 SECURE_CONTENT_TYPE_NOSNIFF = config(
     "SECURE_CONTENT_TYPE_NOSNIFF", default=True, cast=bool
 )
-SECURE_BROWSER_XSS_FILTER = config("SECURE_BROWSER_XSS_FILTER", default=True, cast=bool)
 SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=15768000, cast=int)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
     "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True, cast=int
@@ -171,7 +182,6 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Database
 DATABASES = {"default": config("DATABASE_URL", cast=dj_database_url.parse)}
-pymysql.install_as_MySQLdb()
 
 # Enable debugging only if in dev env
 if DEBUG:
@@ -190,24 +200,26 @@ if SENTRY_DSN := config("SENTRY_DSN", None):
         traces_sample_rate=config("SENTRY_TRACES_SAMPLE_RATE", 0.01),
     )
 
-# Django-CSP
-CSP_DEFAULT_SRC = (
-    "'self'",
-    "https://*.mozilla.org",
-    "https://*.mozilla.net",
-)
-CSP_IMG_SRC = (
-    "'self'",
-    "https://*.google-analytics.com",
-    "https://*.gravatar.com",
-    "https://*.wp.com",
-    "https://people.mozilla.org",
-    "https://*.mozaws.net",
-)
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "https://*.google-analytics.com",
-)
+# Django-CSP 4.x — unified dict format replaced individual CSP_* settings
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": [
+            "'self'",
+            "https://*.mozilla.org",
+            "https://*.mozilla.net",
+        ],
+        "img-src": [
+            "'self'",
+            "https://*.gravatar.com",
+            "https://*.wp.com",
+            "https://people.mozilla.org",
+            "https://*.mozaws.net",
+        ],
+        "script-src": [
+            "'self'",
+        ],
+    },
+}
 
 
 # Django OIDC

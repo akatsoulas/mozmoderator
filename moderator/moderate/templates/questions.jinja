@@ -1,72 +1,64 @@
 {% extends "base.jinja" %}
 {% from "includes/moderator_macros.html" import user_profile %}
+{% from "includes/form_macros.html" import floating, check %}
 
 {% block head %}
 <title>Mozilla Moderator - {{ event.name }}</title>
 {% endblock %}
 
 {% block breadcrumb %}
-<ol class="breadcrumb">
-  <li><a href="/">Events</a></li>
-  <li class="active">{{ event.name }}</li>
-</ol>
-
 {% if q_form.errors %}
 <div class="alert alert-danger alert-dismissible" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
   Please correct the errors below.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
 {% endblock %}
 
 {% block content %}
 {% if event.is_moderated and not event.archived %}
-<div class="breadcrumb help-text">
+<div class="alert alert-info help-text">
   Questions will remain in a queue until a moderator approves them.
   By using any legitimate email address, such as those offered by Firefox Relay,
   the moderator can offer a reason if your question is declined.
 </div>
 {% endif %}
 {% if open %}
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card mb-4">
+  <div class="card-body">
     <form method="post" action="{{ url('event', e_slug=event.slug) }}" id="question-form">
       {% csrf_token %}
       {{ q_form.non_field_errors() }}
-      <div class="selfimage">
-        {% if not user.userprofile.avatar_url %}
-        <img alt="Unknown profile image" src="{{ static('img/unknown.png') }}" />
-        {% else %}
-        <img src="{{ user.userprofile.avatar_url }}" alt="User profile image" />
-        {% endif %}
-      </div>
-      <div class="form-group question-text
-            {% if q_form.question.errors %}
-              has-error
-            {% endif %}" id="question-input">
-        <label for="{{ q_form.question.id_for_label }}">
-          Ask your question below.
-          <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>
-        </label>
-        {{ q_form.question }}
-        {{ q_form.question.errors }}
-      </div>
-      <div class="checkbox-anonymous">
-        {{ q_form.is_anonymous }}
-        <label for="{{ q_form.is_anonymous.id_for_label }}">
-          Post as an anonymous user.
-        </label>
-      </div>
-      {% if event.is_moderated %}
-      <div class="form-group question-text contact-info-container">
-        {{ q_form.submitter_contact_info }}
-        {{ q_form.submitter_contact_info.errors }}
-      </div>
-      {% endif %}
-      <div class="ask-container">
-        <input type="submit" class="btn btn-default" value="submit">
+      <div class="ask-row">
+        <div class="selfimage">
+          {% if not user.userprofile.avatar_url %}
+          <img alt="Unknown profile image" src="{{ static('img/unknown.png') }}" />
+          {% else %}
+          <img src="{{ user.userprofile.avatar_url }}" alt="User profile image" />
+          {% endif %}
+        </div>
+        <div class="ask-row-field">
+          {{ floating(q_form.question, "Ask your question") }}
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+              {{ q_form.is_anonymous }}
+              <label class="form-check-label" for="{{ q_form.is_anonymous.id_for_label }}">
+                Post as an anonymous user
+              </label>
+            </div>
+            <div class="form-text">
+              <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>
+            </div>
+          </div>
+          {% if event.is_moderated %}
+          <div class="contact-info-container">
+            {{ floating(q_form.submitter_contact_info, "Contact email (optional)") }}
+          </div>
+          {% endif %}
+          <div class="ask-container">
+            <input type="submit" class="btn btn-primary" value="Submit">
+          </div>
+        </div>
       </div>
     </form>
   </div>
@@ -74,8 +66,8 @@
 {% endif %}
 
 {% for q in questions %}
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card mb-3">
+  <div class="card-body">
     {% if q.addressed %}
     <div class="ribbon-wrapper">
       <div class="ribbon">answered</div>
@@ -96,20 +88,20 @@
       {% if open %}
       {% if user_voted(q, user) %}
       <button class="btn btn-dark btn-sm vote" id="{{ q.id }}">
-        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+        <i class="bi bi-hand-thumbs-up" aria-hidden="true"></i>
         Remove the upvote
       </button>
       {% else %}
       <button class="btn btn-light btn-sm vote" id="{{ q.id }}">
-        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+        <i class="bi bi-hand-thumbs-up" aria-hidden="true"></i>
         Upvote
       </button>
       {% endif %}
       {% endif %}
       {% endif %}
       {% if open and can_answer_question(q, user) %}
-      <button class="btn btn-default btn-sm reply-button" id="{{ q.id }}" title="Answer this question"
-        data-toggle="modal" data-target="#AnswerModal">
+      <button class="btn btn-secondary btn-sm reply-button" id="{{ q.id }}" title="Answer this question"
+        data-bs-toggle="modal" data-bs-target="#AnswerModal">
         reply
       </button>
       {% endif %}
@@ -135,20 +127,15 @@
       <form method="post" action="" id="answer-form">
         {% csrf_token %}
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
           <h4 class="modal-title">Answer</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <label for="{{ q_form.answer.id_for_label }}">
-            Ask your question below.
-            <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>
-          </label>
-          {{ q_form.answer }}
+          {{ floating(q_form.answer, "Your reply",
+                      help='<a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>') }}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <input type="submit" class="btn btn-primary" value="Submit">
         </div>
       </form>

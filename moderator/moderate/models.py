@@ -68,6 +68,7 @@ class Event(models.Model):
         help_text="Optional: Helpful links, additional information",
         blank=True,
         default="",
+        validators=[MaxLengthValidator(2500)],
     )
     archived = models.BooleanField(default=False)
     slug = models.SlugField(max_length=400, blank=True)
@@ -108,7 +109,7 @@ class Question(models.Model):
     asked_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     event = models.ForeignKey(Event, related_name="questions", on_delete=models.CASCADE)
     question = models.TextField(
-        validators=[MaxLengthValidator(280), MinLengthValidator(10)]
+        validators=[MaxLengthValidator(500), MinLengthValidator(10)]
     )
     answer = models.TextField(
         validators=[MaxLengthValidator(2500)], default="", blank=True
@@ -123,7 +124,7 @@ class Question(models.Model):
     rejection_reason = models.TextField(
         default="",
         blank=True,
-        validators=[MinLengthValidator(10)],
+        validators=[MinLengthValidator(10), MaxLengthValidator(500)],
     )
 
     def __str__(self):

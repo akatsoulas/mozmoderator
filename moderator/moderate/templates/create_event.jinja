@@ -1,4 +1,5 @@
 {% extends "base.jinja" %}
+{% from "includes/form_macros.html" import floating, check %}
 
 {% set edit=False %}
 {% if slug %}
@@ -19,10 +20,8 @@
 
 {% if event_form.errors %}
 <div class="alert alert-danger alert-dismissible" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
   Please correct the errors below.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
 {% endblock %}
@@ -36,66 +35,31 @@
   Create an Event
   {% endif %}
 </h1>
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card">
+  <div class="card-body">
     <form method="post" {% if edit %} action="{{ url('edit_event', slug=slug) }}" {% else %}
       action="{{ url('create_event') }}" {% endif %} id="question-form">
       {% csrf_token %}
-      <div class="form-group question-text" id="event-input">
-        <label for="{{ event_form.name.id_for_label }}">
-          Event title
-        </label>
-        {{ event_form.name }}
-      </div>
-      <div class="form-group question-text">
-        <label for="{{ event_form.body.id_for_label }}">
-          Additional information for this event.
-          <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>
-        </label>
-        {{ event_form.body }}
-      </div>
-      <div class="form-group question-text">
-        <label for="{{ event_form.event_date.id_for_label }}">
-          When is this event happening?
-        </label>
-        {{ event_form.event_date }}
-      </div>
+      {{ floating(event_form.name, "Event title") }}
+      {{ floating(event_form.body, "Description",
+                  help='<a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown supported.</a>') }}
+      {{ floating(event_form.event_date, "Event date") }}
       {% if user_can_edit %}
-      <div class="checkbox-moderated">
-        {{ event_form.users_can_vote }}
-        <label for="{{ event_form.users_can_vote.id_for_label }}">
-          Select if users are allowed to vote questions in this event.
-        </label>
-      </div>
-      <div class="checkbox-nda">
-        {{ event_form.is_nda }}
-        <label for="{{ event_form.is_nda.id_for_label }}">
-          Select if <a target="_blank" href="https://people.mozilla.org/a/nda">NDA Community members</a> should be able
-          to see this event.
-        </label>
-      </div>
-      <div class="checkbox-moderated">
-        {{ event_form.is_moderated }}
-        <label for="{{ event_form.is_moderated.id_for_label }}">
-          Select if this should be a moderated event.
-        </label>
-      </div>
+      {{ check(event_form.users_can_vote, "Allow users to vote on questions") }}
+      {{ check(event_form.is_nda,
+               'Restrict to <a target="_blank" href="https://people.mozilla.org/a/nda">NDA Community members</a>') }}
+      {{ check(event_form.is_moderated, "Moderated event (questions need approval)") }}
       {% if event %}
-      <div class="checkbox-moderated">
-        {{ event_form.archived }}
-        <label for="{{ event_form.archived.id_for_label }}">
-          Should this event be archived?
-        </label>
-      </div>
+      {{ check(event_form.archived, "Archive this event") }}
       {% endif %}
-      <div>
-        {{ event_form.moderators.label_tag() }}
+      <div class="mb-3">
+        <label class="form-label" for="{{ event_form.moderators.id_for_label }}">Moderators</label>
         {{ event_form.moderators }}
       </div>
       {% endif %}
       {{ event_form.non_field_errors() }}
       <div>
-        <input type="submit" class="btn btn-success btn-sm" value="save">
+        <input type="submit" class="btn btn-primary" value="Save">
       </div>
     </form>
   </div>
