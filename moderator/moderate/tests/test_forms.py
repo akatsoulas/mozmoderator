@@ -12,7 +12,7 @@ def test_question_form_rejects_too_short_text():
 
 @pytest.mark.django_db
 def test_question_form_rejects_too_long_text():
-    form = QuestionForm(data={"question": "x" * 281})
+    form = QuestionForm(data={"question": "x" * 501})
     assert not form.is_valid()
     assert "question" in form.errors
 

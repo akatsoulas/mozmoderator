@@ -67,8 +67,10 @@ ARG UID=10001
 ARG GID=10001
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     default-libmysqlclient-dev \
     default-mysql-client \
+    pkg-config \
   && rm -rf /var/lib/apt/lists/*
 
 ENV PORT=8000 \
