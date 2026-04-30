@@ -287,16 +287,6 @@ ul.errorlist {
     margin-top: 10%;
 }
 
-.contact-info-container {
-    vertical-align: top;
-    margin-left: 10%;
-}
-
-.contact-info-container :is(input, ul) {
-    width: 50%;
-    margin: auto;
-}
-
 .ask-container {
     align-items: center;
     justify-content: space-between;
@@ -391,11 +381,6 @@ ul.errorlist {
     }
 
     .checkbox-anonymous {
-        margin-left: 0;
-        float: none;
-    }
-
-    .contact-info-container {
         margin-left: 0;
         float: none;
     }
