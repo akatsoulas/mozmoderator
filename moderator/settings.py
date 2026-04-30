@@ -210,6 +210,7 @@ CONTENT_SECURITY_POLICY = {
         ],
         "img-src": [
             "'self'",
+            "data:",
             "https://*.gravatar.com",
             "https://*.wp.com",
             "https://people.mozilla.org",
